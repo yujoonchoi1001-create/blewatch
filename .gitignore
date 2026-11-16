@@ -1,0 +1,9 @@
+.gradle/
+build/
+app/build/
+*.apk
+*.exe
+*.jks
+keystore.properties
+pc/probe.txt
+!docs/*.apk

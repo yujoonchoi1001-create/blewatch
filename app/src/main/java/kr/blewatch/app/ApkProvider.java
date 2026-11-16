@@ -1,0 +1,71 @@
+package kr.blewatch.app;
+
+import android.content.ContentProvider;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.MatrixCursor;
+import android.net.Uri;
+import android.os.ParcelFileDescriptor;
+import android.provider.OpenableColumns;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+
+/**
+ * 설치된 이 앱의 APK 파일을 공유 대상 앱(카카오톡 등)이 읽을 수 있게 내어 준다.
+ * 읽기 전용이며, 공유할 때 권한을 준 앱만 접근할 수 있다.
+ */
+public class ApkProvider extends ContentProvider {
+    static final String AUTHORITY = "kr.blewatch.app.apk";
+    static final String FILE_NAME = "BleWatch.apk";
+    static final String MIME = "application/vnd.android.package-archive";
+
+    private File apk() {
+        return new File(getContext().getApplicationInfo().sourceDir);
+    }
+
+    @Override
+    public boolean onCreate() {
+        return true;
+    }
+
+    @Override
+    public ParcelFileDescriptor openFile(Uri uri, String mode) throws FileNotFoundException {
+        return ParcelFileDescriptor.open(apk(), ParcelFileDescriptor.MODE_READ_ONLY);
+    }
+
+    @Override
+    public String getType(Uri uri) {
+        return MIME;
+    }
+
+    @Override
+    public Cursor query(Uri uri, String[] projection, String selection, String[] args, String sort) {
+        String[] cols = projection != null ? projection
+                : new String[]{OpenableColumns.DISPLAY_NAME, OpenableColumns.SIZE};
+        Object[] row = new Object[cols.length];
+        for (int i = 0; i < cols.length; i++) {
+            if (OpenableColumns.DISPLAY_NAME.equals(cols[i])) row[i] = FILE_NAME;
+            else if (OpenableColumns.SIZE.equals(cols[i])) row[i] = apk().length();
+            else row[i] = null;
+        }
+        MatrixCursor c = new MatrixCursor(cols, 1);
+        c.addRow(row);
+        return c;
+    }
+
+    @Override
+    public Uri insert(Uri uri, ContentValues values) {
+        return null;
+    }
+
+    @Override
+    public int delete(Uri uri, String selection, String[] args) {
+        return 0;
+    }
+
+    @Override
+    public int update(Uri uri, ContentValues values, String selection, String[] args) {
+        return 0;
+    }
+}

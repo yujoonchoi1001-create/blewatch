@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 신호 세기 게이지: 가까울수록 높아지는 막대 네 개 -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path android:fillColor="#4CC38A" android:pathData="M29,62h9v12h-9z" />
+    <path android:fillColor="#4CC38A" android:pathData="M43,52h9v22h-9z" />
+    <path android:fillColor="#FFB454" android:pathData="M57,42h9v32h-9z" />
+    <path android:fillColor="#FF5D5D" android:pathData="M71,32h9v42h-9z" />
+</vector>

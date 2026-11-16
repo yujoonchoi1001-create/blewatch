@@ -1,0 +1,56 @@
+plugins {
+    id 'com.android.application'
+}
+
+// 배포용 서명 키 설정. 키와 비밀번호는 저장소 밖(사용자 폴더)에 두고 여기서 읽기만 한다.
+def keyPropsFile = new File(System.getProperty('user.home'), 'android-build/keys/keystore.properties')
+def keyProps = new Properties()
+if (keyPropsFile.exists()) {
+    keyPropsFile.withInputStream { keyProps.load(it) }
+}
+
+android {
+    namespace 'kr.blewatch.app'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'kr.blewatch.app'
+        minSdk 26
+        targetSdk 34
+        versionCode 6
+        versionName '0.6'
+    }
+
+    signingConfigs {
+        release {
+            if (keyPropsFile.exists()) {
+                storeFile file(keyProps['storeFile'])
+                storePassword keyProps['storePassword']
+                keyAlias keyProps['keyAlias']
+                keyPassword keyProps['keyPassword']
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            if (keyPropsFile.exists()) {
+                signingConfig signingConfigs.release
+            }
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.13.2'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
